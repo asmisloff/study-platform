@@ -1,9 +1,26 @@
 package ru.amisfloff.studyplatform.solution.aggregation;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 abstract class RtnSolutionAggregator {
+
+    RtnSolutionAggregator(RtnRequest rtnRequest, RawDataRequest rawDataRequest) {
+        request = rtnRequest;
+        if (rtnRequest != null) {
+            rtnDevicesAggregators = new HashMap<>();
+            for (var device : rtnRequest.rtnDevices()) {
+                Cleat cleat = rawDataRequest == null
+                    ? null
+                    : rawDataRequest.findCleat(device.schemaObjectId());
+                RtnDeviceSolutionAggregator ag = new RtnDeviceSolutionAggregator(cleat != null && cleat.series != null);
+                rtnDevicesAggregators.put(device, ag);
+            }
+        } else {
+
+        }
+    }
 
     public abstract void append(BlockSsDc ss, BlockPayloadDc pl);
 
@@ -25,6 +42,10 @@ abstract class RtnSolutionAggregator {
     protected List<BlockPayloadDc> plBuffer;
     protected RtnSolver solver;
     protected Map<RtnDevice, RtnDeviceSolutionAggregator> rtnDevicesAggregators;
+}
+
+interface RawDataRequest {
+    Iterable<RtnDevice> rtnDevices();
 }
 
 abstract class RtnDeviceSolutionAggregator {
@@ -49,7 +70,9 @@ interface RtnSolver {
     void reset();
 }
 
-interface RtnRequest { }
+interface RtnRequest {
+    Iterable<RtnDevice> rtnDevices();
+}
 
 interface SchemaObjectId {
     int x();
