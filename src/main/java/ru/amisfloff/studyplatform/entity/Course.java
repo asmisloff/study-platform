@@ -1,28 +1,26 @@
 package ru.amisfloff.studyplatform.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "course")
-@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Builder
 public class Course {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
+    private Long id;
 
-    @Setter
     @Column(name = "title", nullable = false)
-    String title;
-
     @Setter
+    private String title;
+
     @Column(name = "author", nullable = false)
-    String author;
+    @Setter
+    private String author;
 }
