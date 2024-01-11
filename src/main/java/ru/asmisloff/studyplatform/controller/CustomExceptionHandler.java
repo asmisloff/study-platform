@@ -1,4 +1,4 @@
-package ru.amisfloff.studyplatform.controller;
+package ru.asmisloff.studyplatform.controller;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.amisfloff.studyplatform.dto.ApiError;
-import ru.amisfloff.studyplatform.exceptions.ResourceNotFoundException;
+import ru.asmisloff.studyplatform.dto.ApiError;
+import ru.asmisloff.studyplatform.exceptions.ResourceNotFoundException;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;

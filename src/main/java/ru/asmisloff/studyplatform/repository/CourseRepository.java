@@ -1,8 +1,8 @@
-package ru.amisfloff.studyplatform.repository;
+package ru.asmisloff.studyplatform.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.amisfloff.studyplatform.entity.Course;
+import ru.asmisloff.studyplatform.entity.Course;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 

@@ -1,17 +1,11 @@
-package ru.amisfloff.studyplatform.validation;
+package ru.asmisloff.studyplatform.validation;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
-import org.apache.commons.lang3.StringUtils;
-
+import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static java.lang.Character.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

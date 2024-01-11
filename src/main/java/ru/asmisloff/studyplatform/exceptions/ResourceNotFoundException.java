@@ -1,4 +1,4 @@
-package ru.amisfloff.studyplatform.exceptions;
+package ru.asmisloff.studyplatform.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(long id) {

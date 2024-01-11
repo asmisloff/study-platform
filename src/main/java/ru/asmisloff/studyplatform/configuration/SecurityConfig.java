@@ -1,4 +1,4 @@
-package ru.amisfloff.studyplatform.configuration;
+package ru.asmisloff.studyplatform.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
-            )
-//            .formLogin(withDefaults())
-//            .httpBasic(withDefaults());
-            .build();
+            .authorizeRequests().antMatchers("/**").permitAll()
+            .and().build();
     }
 }

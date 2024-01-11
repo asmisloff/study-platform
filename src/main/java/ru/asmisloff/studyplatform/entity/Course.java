@@ -1,7 +1,8 @@
-package ru.amisfloff.studyplatform.entity;
+package ru.asmisloff.studyplatform.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "course")
