@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 
-@SuppressWarnings("ClassCanBeRecord")
 @Service
 @AllArgsConstructor
 public class CourseService {
@@ -43,7 +42,7 @@ public class CourseService {
     public void update(CourseRequestToUpdate request) {
         Course course = getById(request.id());
         course.setTitle(request.title());
-        course.setAuthor(request.author());
+//        course.setAuthor(request.author());
         courseRepository.save(course);
     }
 

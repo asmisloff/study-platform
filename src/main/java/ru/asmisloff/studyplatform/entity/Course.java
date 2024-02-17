@@ -9,7 +9,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Builder
 public class Course {
 
     @Id
@@ -21,7 +20,11 @@ public class Course {
     @Setter
     private String title;
 
-    @Column(name = "author", nullable = false)
+    @Column(name = "description")
     @Setter
-    private String author;
+    private String description;
+
+//    @Column(name = "created_user_id")
+//    @Setter
+//    private User author;
 }

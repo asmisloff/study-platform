@@ -1,19 +1,7 @@
 databaseChangeLog:
-#  - changeSet:
-#      id: 2024-02-01_add_table_users
-#      author: asmisloff
-#      sqlFile:
-#        path: sql/add_table_users.sql
-#        relativeToChangelogFile: true
-#  - changeSet:
-#      id: 2024-02-01_add_table_topics
-#      author: asmisloff
-#      sqlFile:
-#        path: sql/add_table_topics.sql
-#        relativeToChangelogFile: true
-#  - changeSet:
-#      id: 2024-02-01_add_table_courses
-#      author: asmisloff
-#      sqlFile:
-#        path: sql/add_table_courses.sql
-#        relativeToChangelogFile: true
+  - changeSet:
+      id: 2024-02-17_create_basic_tables
+      author: asmisloff
+      sqlFile:
+        path: sql/2024-02-17_create_basic_tables.sql
+        relativeToChangelogFile: true
