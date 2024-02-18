@@ -2,32 +2,32 @@ BEGIN TRANSACTION;
 
 CREATE TABLE categories (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
     description VARCHAR(300)
 );
 
 CREATE TABLE learning_statuses (
     id BIGINT PRIMARY KEY,
-    name VARCHAR(16)
+    name VARCHAR(16) NOT NULL
 );
 
 CREATE TABLE file_types (
     id BIGINT PRIMARY KEY,
-    name VARCHAR(12)
+    name VARCHAR(12) NOT NULL
 );
 
 CREATE TABLE roles (
     id BIGINT PRIMARY KEY,
-    name VARCHAR(12)
+    name VARCHAR(12) NOT NULL
 );
 
 CREATE TABLE files (
     id BIGSERIAL PRIMARY KEY,
-    client_name VARCHAR(100),
-    actual_name VARCHAR(16),
-    type_id BIGINT,
-    thumbnail VARCHAR(16),
-    bucket VARCHAR(16),
+    client_name VARCHAR(100) NOT NULL,
+    actual_name VARCHAR(16) NOT NULL,
+    type_id BIGINT NOT NULL,
+    thumbnail VARCHAR(16) NOT NULL,
+    bucket VARCHAR(16) NOT NULL,
     FOREIGN KEY (type_id) REFERENCES file_types(id)
 );
 

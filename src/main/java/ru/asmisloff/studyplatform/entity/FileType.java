@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "learning_statuses")
+@Table(name = "file_types")
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class LearningStatus {
+@NoArgsConstructor
+public class FileType {
 
     @Id
     @Column(name = "id")
     Long id;
 
-    @Column(name = "name", length = 16, nullable = false)
+    @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    Status status;
+    MediaType mediaType;
 }

@@ -19,10 +19,10 @@ public class Category {
     @NotNull
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 100, nullable = false)
     @NotNull
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 300)
     private String description;
 }
