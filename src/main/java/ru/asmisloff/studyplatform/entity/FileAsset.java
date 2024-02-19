@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class File {
+public class FileAsset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

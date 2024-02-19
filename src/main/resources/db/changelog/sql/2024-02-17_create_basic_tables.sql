@@ -40,7 +40,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL,
     phone VARCHAR(50),
     avatar_id BIGINT,
-    registration_time TIMESTAMP,
+    registration_time TIMESTAMP NOT NULL,
     last_update_time TIMESTAMP,
     deletion_time TIMESTAMP,
     last_updated_user_id BIGINT,
