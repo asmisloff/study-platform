@@ -1,5 +1,6 @@
 package ru.asmisloff.studyplatform.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,16 +10,16 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "courses")
 @Getter
 @Setter
+@Entity
+@Table(name = "paragraphs")
 @NoArgsConstructor
-public class Course {
+public class Paragraph {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
@@ -48,22 +49,27 @@ public class Course {
     @Column(name = "deletion_time")
     private OffsetDateTime deletionTime;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @OneToMany(mappedBy = "paragraph", orphanRemoval = true, cascade = CascadeType.ALL)
+    @Setter(AccessLevel.NONE)
+    private List<Lesson> lessons = new ArrayList<>();
 
-    @Column(name = "estimated_duration")
-    private Integer estimatedDuration;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
-    @Column(name = "tag", length = 32)
-    private String tag;
+    @Column(name = "idx", nullable = false)
+    private int index;
 
-    @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Paragraph> paragraphs = new ArrayList<>();
-
-    public Course(String title, String description, User createdUser) {
+    public Paragraph(String title, String description, User createdUser, Course course, int index) {
         this.title = title;
         this.description = description;
         this.createdUser = createdUser;
+        this.course = course;
+        this.index = index;
+        creationTime = OffsetDateTime.now();
+    }
+
+    public boolean addLesson(Lesson lesson) {
+        return lessons.add(lesson);
     }
 }

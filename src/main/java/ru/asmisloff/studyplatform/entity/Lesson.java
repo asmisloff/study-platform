@@ -3,22 +3,21 @@ package ru.asmisloff.studyplatform.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@Table(name = "courses")
 @Getter
 @Setter
+@Entity
+@Table(name = "lessons")
 @NoArgsConstructor
-public class Course {
+public class Lesson  implements Comparable<Lesson> {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "title", nullable = false, length = 100)
@@ -48,22 +47,31 @@ public class Course {
     @Column(name = "deletion_time")
     private OffsetDateTime deletionTime;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(name = "content")
+    private String content;
 
-    @Column(name = "estimated_duration")
-    private Integer estimatedDuration;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "paragraph_id")
+    private Paragraph paragraph;
 
-    @Column(name = "tag", length = 32)
-    private String tag;
+    @Column(name = "idx", nullable = false)
+    private int index;
 
-    @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Paragraph> paragraphs = new ArrayList<>();
-
-    public Course(String title, String description, User createdUser) {
+    public Lesson(String title,
+                  String description,
+                  User createdUser,
+                  Paragraph paragraph,
+                  int index) {
         this.title = title;
         this.description = description;
         this.createdUser = createdUser;
+        this.paragraph = paragraph;
+        this.index = index;
+        this.creationTime = OffsetDateTime.now();
+    }
+
+    @Override
+    public int compareTo(@NotNull Lesson o) {
+        return this.index - o.index;
     }
 }

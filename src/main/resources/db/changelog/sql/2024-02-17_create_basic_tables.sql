@@ -75,7 +75,7 @@ CREATE TABLE courses (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE modules (
+CREATE TABLE paragraphs (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(100),
     description TEXT,
@@ -95,29 +95,29 @@ CREATE TABLE modules (
 
 CREATE TABLE lessons (
     id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(100),
+    title VARCHAR(100) NOT NULL,
     description TEXT,
-    created_user_id BIGINT,
+    created_user_id BIGINT NOT NULL,
     last_updated_user_id BIGINT,
     deleted_user_id BIGINT,
-    creation_time TIMESTAMP,
+    creation_time TIMESTAMP NOT NULL,
     last_update_time TIMESTAMP,
     deletion_time TIMESTAMP,
     content TEXT,
-    module_id BIGINT,
-    idx INTEGER,
+    paragraph_id BIGINT NOT NULL,
+    idx INTEGER NOT NULL,
     FOREIGN KEY (created_user_id) REFERENCES users(id),
     FOREIGN KEY (last_updated_user_id) REFERENCES users(id),
     FOREIGN KEY (deleted_user_id) REFERENCES users(id),
-    FOREIGN KEY (module_id) REFERENCES modules(id)
+    FOREIGN KEY (paragraph_id) REFERENCES paragraphs(id)
 );
 
-CREATE TABLE users_to_courses (
+CREATE TABLE students_to_courses (
     user_id BIGINT,
     course_id BIGINT,
-    start_time TIMESTAMP,
+    start_time TIMESTAMP NOT NULL DEFAULT now(),
     completion_time TIMESTAMP,
-    score INTEGER,
+    score INTEGER DEFAULT 0,
     course_rating SMALLINT,
     review TEXT,
     PRIMARY KEY (user_id, course_id),

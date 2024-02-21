@@ -1,6 +1,9 @@
 package ru.asmisloff.studyplatform.entity;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +13,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class User {
@@ -58,11 +60,19 @@ public class User {
     private Long deletedUserId;
 
     @ManyToMany
-    @JoinTable(name = "user_roles",
+    @JoinTable(
+            name = "user_roles",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Setter(AccessLevel.NONE)
     private Set<Role> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "students_to_courses",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "course_id") })
+    private Set<Course> studiedCourses = new HashSet<>();
 
     public User(String login, String password,
                 String firstName, String lastName,

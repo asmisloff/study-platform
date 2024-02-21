@@ -35,13 +35,13 @@ public class CourseService {
     }
 
     public Course save(CourseRequestToCreate request) {
-        Course course = new Course(null, request.title(), request.author());
+        Course course = new Course(request.title(), "", null);
         return courseRepository.save(course);
     }
 
     public void update(CourseRequestToUpdate request) {
         Course course = getById(request.id());
-        course.setTitle(request.title());
+//        course.setTitle(request.title());
 //        course.setAuthor(request.author());
         courseRepository.save(course);
     }
