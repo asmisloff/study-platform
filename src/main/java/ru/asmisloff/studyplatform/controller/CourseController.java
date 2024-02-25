@@ -2,7 +2,8 @@ package ru.asmisloff.studyplatform.controller;
 
 import lombok.AllArgsConstructor;
 import org.jboss.logging.Logger;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.asmisloff.studyplatform.dto.CourseRequestToCreate;
 import ru.asmisloff.studyplatform.dto.CourseRequestToUpdate;
@@ -21,15 +22,17 @@ import static java.util.Objects.requireNonNullElse;
 public class CourseController {
 
     @GetMapping("/{id}")
-    public Course getCourse(@PathVariable("id") Long id) { return courseService.getById(id); }
+    public Course getCourse(@PathVariable("id") Long id) {
+        return courseService.getById(id);
+    }
 
     @GetMapping
-    public List<Course> courseTable() { return courseService.getAll(); }
+    public Page<Course> getPage(Pageable pageable) {
+        return courseService.getPage(pageable);
+    }
 
     @GetMapping("/filter")
-    public List<Course> findByTitleWithPrefix(
-        @Nullable @RequestParam(name = "titlePrefix", required = false) String titlePrefix
-    ) {
+    public List<Course> findByTitleWithPrefix(@RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
         return courseService.findAllByTitleWithPrefix(requireNonNullElse(titlePrefix, ""));
     }
 

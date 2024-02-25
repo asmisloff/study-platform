@@ -2,6 +2,8 @@ package ru.asmisloff.studyplatform.service;
 
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.asmisloff.studyplatform.dto.CourseRequestToCreate;
@@ -26,8 +28,8 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Course> getAll() {
-        return courseRepository.findAll();
+    public Page<Course> getPage(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

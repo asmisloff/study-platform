@@ -9,9 +9,7 @@ import static java.util.Objects.requireNonNullElse;
 
 public class Constraints {
 
-    public static <T> ObjectViolation<T> useConstraints(@Nullable T value,
-                                                        @NotNull String name,
-                                                        boolean required) {
+    public static <T> ObjectViolation<T> useConstraints(@Nullable T value, @NotNull String name, boolean required) {
         ObjectViolation<T> v = new ObjectViolation<>(value, name);
         if (value == null) {
             if (required) {
@@ -21,21 +19,20 @@ public class Constraints {
         return v;
     }
 
-    public static @NotNull StringViolation useConstraints(String value,
-                                                          String name,
-                                                          boolean required,
-                                                          int min,
-                                                          int max) {
+    public static @NotNull StringViolation useConstraints(
+        String value, String name, boolean required, int min, int max
+    ) {
         StringViolation v = defConstraints(value, name, required, min, max, null);
         return requireNonNullElse(v, new StringViolation(value, name));
     }
 
-    public static StringViolation defConstraints(String value,
-                                                 String name,
-                                                 boolean required,
-                                                 int min,
-                                                 int max,
-                                                 Function<@NotNull String, String> additionally) {
+    public static StringViolation defConstraints(String value, String name, boolean required, int min, int max) {
+        return defConstraints(value, name, required, min, max, null);
+    }
+
+    public static StringViolation defConstraints(
+        String value, String name, boolean required, int min, int max, Function<@NotNull String, String> additionally
+    ) {
         StringViolation v = null;
         if (value == null) {
             if (required) {
