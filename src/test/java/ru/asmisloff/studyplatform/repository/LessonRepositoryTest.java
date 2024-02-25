@@ -24,9 +24,6 @@ class LessonRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ParagraphRepository paragraphRepository;
-
-    @Autowired
     private CourseRepository courseRepository;
 
     @Autowired
@@ -42,17 +39,18 @@ class LessonRepositoryTest {
 
     private User user = new User(login, password, firstName, lastName, email);
     private Course course = new Course(title, description, null);
-    private Paragraph paragraph = new Paragraph(title, description, null, course, 0);
-    private Lesson lesson = new Lesson(title, description, null, paragraph, 0);
+    private Lesson paragraph = new Lesson(title, description, null, course, 0);
+    private Lesson lesson = new Lesson(title, description, null, course, 1);
 
     @BeforeEach
-    public void setup() {
+    public void init() {
         user = userRepository.save(user);
-        paragraph.addLesson(lesson);
-        course.getParagraphs().add(paragraph);
+        paragraph.addNested(lesson);
         lesson.setCreatedUser(user);
         paragraph.setCreatedUser(user);
         course.setCreatedUser(user);
+        course.addLesson(paragraph);
+        course.addLesson(lesson);
 
         course = courseRepository.save(course);
         user.getStudiedCourses().add(course);
@@ -62,13 +60,15 @@ class LessonRepositoryTest {
     @Test
     @Transactional
     public void save() {
-        paragraph = course.getParagraphs().get(0);
-        lesson = paragraph.getLessons().get(0);
+        paragraph = course.sortedLessons()
+                .filter(Lesson::hasNested)
+                .findAny().orElseThrow();
+        lesson = paragraph.getNested().get(0);
 
         assertNotNull(course.getId());
         assertNotNull(paragraph.getId());
         assertNotNull(lesson.getId());
-        assertEquals(paragraph.getId(), lesson.getParagraph().getId());
+        assertEquals(paragraph.getId(), lesson.getContainedLesson().getId());
         assertEquals(course.getId(), paragraph.getCourse().getId());
 
         List<StudentToCourse> studentToCourseList = studentToCourseRepository.findAll();
@@ -81,8 +81,8 @@ class LessonRepositoryTest {
     public void findById() {
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         var savedCourse = assertDoesNotThrow(() -> courseRepository.findById(course.getId()).get());
-        Paragraph savedParagraph = savedCourse.getParagraphs().get(0);
-        Lesson savedLesson = savedParagraph.getLessons().get(0);
+        Lesson savedParagraph = savedCourse.sortedLessons().findFirst().orElseThrow();
+        Lesson savedLesson = savedParagraph.getNested().get(0);
         assertEquals(course, savedCourse);
         assertEquals(paragraph, savedParagraph);
         assertEquals(lesson, savedLesson);
@@ -93,7 +93,7 @@ class LessonRepositoryTest {
     public void delete() {
         StudentToCourseId studentToCourseId = new StudentToCourseId(user, course);
         var studentToCourse = assertDoesNotThrow(() -> studentToCourseRepository.getById(studentToCourseId));
-        assertDoesNotThrow(() -> paragraphRepository.getById(paragraph.getId()));
+        assertDoesNotThrow(() -> lessonRepository.getById(paragraph.getId()));
         assertDoesNotThrow(() -> lessonRepository.getById(lesson.getId()));
         assertDoesNotThrow(() -> courseRepository.getById(course.getId()));
 
@@ -101,7 +101,7 @@ class LessonRepositoryTest {
         courseRepository.delete(course);
 
         assertTrue(courseRepository.findById(course.getId()).isEmpty());
-        assertTrue(paragraphRepository.findById(paragraph.getId()).isEmpty());
+        assertTrue(lessonRepository.findById(paragraph.getId()).isEmpty());
         assertTrue(lessonRepository.findById(lesson.getId()).isEmpty());
         assertTrue(studentToCourseRepository.findById(studentToCourseId).isEmpty());
     }

@@ -1,13 +1,18 @@
 package ru.asmisloff.studyplatform.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "courses")
@@ -59,11 +64,30 @@ public class Course {
     private String tag;
 
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Paragraph> paragraphs = new ArrayList<>();
+    @Setter(AccessLevel.NONE)
+    private Set<Lesson> lessons = new HashSet<>();
 
     public Course(String title, String description, User createdUser) {
         this.title = title;
         this.description = description;
         this.createdUser = createdUser;
+    }
+
+    public Stream<Lesson> sortedLessons() {
+        return lessons.stream().sorted(Comparator.comparingInt(Lesson::getIndex));
+    }
+
+    public void addLesson(@NotNull Lesson lesson) {
+        Objects.requireNonNull(lesson);
+        if (lesson.getCourse() != null && lesson.getCourse() != this) {
+            throw new IllegalArgumentException();
+        }
+        lesson.setCourse(this);
+        lessons.add(lesson);
+    }
+
+    public void removeLesson(@NotNull Lesson lesson) {
+        Objects.requireNonNull(lesson);
+        lessons.remove(lesson);
     }
 }

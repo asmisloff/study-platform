@@ -1,25 +1,17 @@
 package ru.asmisloff.studyplatform.dto;
 
-import ru.asmisloff.studyplatform.validation.TitleCase;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+public record CourseRequestToUpdate(Long id, String title) {
 
-public record CourseRequestToUpdate(
+    @JsonCreator
+    public CourseRequestToUpdate(Long id, String title) {
+        this.id = id;
+        this.title = StringUtils.trim(title);
+    }
 
-    @NotNull(message = "ID is required")
-    Long id,
+    public void validate() {
 
-    @NotNull(message = "Author is required")
-    @NotBlank(message = "Course author has to be filled")
-    String author,
-
-    @NotNull(message = "Title is required")
-    @NotBlank(message = "Course title has to be filled")
-    @TitleCase(
-        name = "Заголовок",
-        message = "Неверное название",
-        lang = TitleCase.Lang.Ru
-    )
-    String title
-) { }
+    }
+}

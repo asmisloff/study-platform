@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import org.jboss.logging.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.bind.annotation.*;
-import ru.asmisloff.studyplatform.CourseService;
 import ru.asmisloff.studyplatform.dto.CourseRequestToCreate;
 import ru.asmisloff.studyplatform.dto.CourseRequestToUpdate;
 import ru.asmisloff.studyplatform.entity.Course;
+import ru.asmisloff.studyplatform.service.CourseService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -39,8 +39,8 @@ public class CourseController {
     }
 
     @PostMapping
-    public long createCourse(@Valid @RequestBody CourseRequestToCreate request) {
-        return courseService.save(request).getId();
+    public long createCourse(@RequestBody CourseRequestToCreate request, @RequestParam("id") long id) {
+        return courseService.save(request, id).getId();
     }
 
     @DeleteMapping("/{id}")

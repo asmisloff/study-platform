@@ -1,5 +1,6 @@
 package ru.asmisloff.studyplatform.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.*;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "lessons")
 @NoArgsConstructor
-public class Lesson  implements Comparable<Lesson> {
+public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +52,20 @@ public class Lesson  implements Comparable<Lesson> {
     @Column(name = "content")
     private String content;
 
+    @OneToMany
+    @JoinColumn(name = "contained_lesson_id")
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private Set<Lesson> nested = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "contained_lesson_id")
+    @Setter(AccessLevel.NONE)
+    private Lesson containedLesson;
+
     @ManyToOne(optional = false)
-    @JoinColumn(name = "paragraph_id")
-    private Paragraph paragraph;
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @Column(name = "idx", nullable = false)
     private int index;
@@ -60,18 +73,44 @@ public class Lesson  implements Comparable<Lesson> {
     public Lesson(String title,
                   String description,
                   User createdUser,
-                  Paragraph paragraph,
+                  Course course,
                   int index) {
         this.title = title;
         this.description = description;
         this.createdUser = createdUser;
-        this.paragraph = paragraph;
+        this.course = course;
         this.index = index;
         this.creationTime = OffsetDateTime.now();
     }
 
-    @Override
-    public int compareTo(@NotNull Lesson o) {
-        return this.index - o.index;
+    public List<Lesson> getNested() {
+        return nested.stream().sorted(Comparator.comparingInt(Lesson::getIndex)).toList();
+    }
+
+    public void addNested(@NotNull Lesson lesson) {
+        Objects.requireNonNull(lesson);
+        if (lesson == this) {
+            throw new IllegalArgumentException();
+        }
+        if (lesson.course != this.course) {
+            throw new IllegalArgumentException();
+        }
+        if (lesson.containedLesson != null && lesson.containedLesson != this) {
+            containedLesson.removeNested(lesson);
+        }
+        lesson.containedLesson = this;
+        this.nested.add(lesson);
+    }
+
+    public void removeNested(Lesson lesson) {
+        if (lesson == null || lesson.containedLesson != this) {
+            return;
+        }
+        lesson.containedLesson = null;
+        nested.remove(lesson);
+    }
+
+    public boolean hasNested() {
+        return !nested.isEmpty();
     }
 }

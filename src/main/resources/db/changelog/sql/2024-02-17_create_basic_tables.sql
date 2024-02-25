@@ -75,24 +75,6 @@ CREATE TABLE courses (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE paragraphs (
-    id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(100),
-    description TEXT,
-    created_user_id BIGINT,
-    last_updated_user_id BIGINT,
-    deleted_user_id BIGINT,
-    creation_time TIMESTAMP,
-    last_update_time TIMESTAMP,
-    deletion_time TIMESTAMP,
-    course_id BIGINT,
-    idx INTEGER,
-    FOREIGN KEY (created_user_id) REFERENCES users(id),
-    FOREIGN KEY (last_updated_user_id) REFERENCES users(id),
-    FOREIGN KEY (deleted_user_id) REFERENCES users(id),
-    FOREIGN KEY (course_id) REFERENCES courses(id)
-);
-
 CREATE TABLE lessons (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -104,12 +86,13 @@ CREATE TABLE lessons (
     last_update_time TIMESTAMP,
     deletion_time TIMESTAMP,
     content TEXT,
-    paragraph_id BIGINT NOT NULL,
+    contained_lesson_id BIGINT,
+    course_id BIGINT NOT NULL,
     idx INTEGER NOT NULL,
     FOREIGN KEY (created_user_id) REFERENCES users(id),
     FOREIGN KEY (last_updated_user_id) REFERENCES users(id),
     FOREIGN KEY (deleted_user_id) REFERENCES users(id),
-    FOREIGN KEY (paragraph_id) REFERENCES paragraphs(id)
+    FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
 CREATE TABLE students_to_courses (
@@ -125,7 +108,7 @@ CREATE TABLE students_to_courses (
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
-CREATE TABLE users_to_lessons (
+CREATE TABLE students_to_lessons (
     user_id BIGINT,
     lesson_id BIGINT,
     status_id BIGINT,
