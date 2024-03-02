@@ -17,6 +17,8 @@ import ru.asmisloff.studyplatform.entity.User;
 import ru.asmisloff.studyplatform.repository.CourseRepository;
 import ru.asmisloff.studyplatform.repository.UserRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -38,26 +40,29 @@ class CourseServiceTest {
     @Autowired
     private CourseRepository courseRepository;
 
+    @PersistenceContext
+    private EntityManager em;
+
     @BeforeEach
     public void init() {
         user = userRepository.save(
-                new User("user", "password", "Ivan", "Ivanoff", "i.ivanoff@mail.ru")
+            new User("user", "password", "Ivan", "Ivanoff", "i.ivanoff@mail.ru")
         );
         courses = courseRepository.saveAll(List.of(
-                new Course("Война и мир", "Роман-эпопея", user),
-                new Course("Евгений Онегин", "Роман в стихах", user)
+            new Course("Война и мир", "Роман-эпопея", user),
+            new Course("Евгений Онегин", "Роман в стихах", user)
         ));
     }
 
     @ParameterizedTest
     @CsvSource(
-            delimiter = '|',
-            value = {
-                    "во  |  0",
-                    "евг |  1",
-                    "q   | -1",
-                    "    |   "
-            }
+        delimiter = '|',
+        value = {
+            "во  |  0",
+            "евг |  1",
+            "q   | -1",
+            "    |   "
+        }
     )
     @Transactional
     void findAllByTitleWithPrefix(@Nullable String prefix, @Nullable Integer index) {
@@ -95,5 +100,16 @@ class CourseServiceTest {
     @Test
     @Transactional
     void delete() {
+    }
+
+    @Test
+    @Transactional
+    void addStudent() {
+        var course = courses.get(0);
+        courseService.addStudent(user.getId(), course.getId());
+        em.flush();
+        em.clear();
+        var fetchedUser = userRepository.findById(user.getId()).orElseThrow();
+        assertTrue(fetchedUser.studiedCourses().anyMatch(c -> c.getId().equals(course.getId())));
     }
 }

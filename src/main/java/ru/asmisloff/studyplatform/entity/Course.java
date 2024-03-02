@@ -65,7 +65,16 @@ public class Course {
 
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private Set<Lesson> lessons = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "students_to_courses",
+        joinColumns = { @JoinColumn(name = "course_id") },
+        inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private Set<User> students = new HashSet<>();
 
     public Course(String title, String description, User createdUser) {
         this.title = title;
@@ -86,8 +95,16 @@ public class Course {
         lessons.add(lesson);
     }
 
-    public void removeLesson(@NotNull Lesson lesson) {
+    public void deleteLesson(@NotNull Lesson lesson) {
         Objects.requireNonNull(lesson);
         lessons.remove(lesson);
+    }
+
+    public void addStudent(User student) {
+        students.add(student);
+    }
+
+    public Stream<User> students() {
+        return students.stream();
     }
 }

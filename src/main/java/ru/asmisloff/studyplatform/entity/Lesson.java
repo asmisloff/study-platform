@@ -70,11 +70,13 @@ public class Lesson {
     @Column(name = "idx", nullable = false)
     private int index;
 
-    public Lesson(String title,
-                  String description,
-                  User createdUser,
-                  Course course,
-                  int index) {
+    public Lesson(
+        String title,
+        String description,
+        int index,
+        User createdUser,
+        Course course
+    ) {
         this.title = title;
         this.description = description;
         this.createdUser = createdUser;

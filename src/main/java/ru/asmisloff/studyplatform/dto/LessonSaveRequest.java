@@ -1,41 +1,41 @@
 package ru.asmisloff.studyplatform.dto;
 
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import ru.asmisloff.studyplatform.validation.AbstractViolation;
+import ru.asmisloff.studyplatform.validation.StringViolation;
 
-import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 
 import static ru.asmisloff.studyplatform.validation.Constraints.defConstraints;
 import static ru.asmisloff.studyplatform.validation.Constraints.useConstraints;
 
-@Getter
-public final class LessonSaveRequest {
+public record LessonSaveRequest(String title, String description, long courseId, int index) {
 
-    private String title;
-    private String description;
-    private long courseId;
-    private int index;
-
-    public AbstractViolation validate(LongPredicate isCourseExists) {
-        return useConstraints(this, "Сохранение урока", true)
-            .wrap(defConstraints(title, "Наименование", true, 1, 50))
-            .wrap(defConstraints(description, "Описание", true, 1, 50))
-            .wrap(
-                useConstraints(courseId, "ID курса", true).addRule(
-                    "Курс ID = %d не существует".formatted(courseId),
-                    isCourseExists.test(courseId)
-                )
-            );
-    }
-
-    @SuppressWarnings("unused")
-    private void setTitle(String title) {
+    public LessonSaveRequest(String title, String description, long courseId, int index) {
         this.title = StringUtils.trim(title);
+        this.description = StringUtils.trim(description);
+        this.courseId = courseId;
+        this.index = index;
     }
 
-    @SuppressWarnings("unused")
-    private void setDescription(String description) {
-        this.description = StringUtils.trim(description);
+    public AbstractViolation validate(Predicate<Long> isCourseExists) {
+        return useConstraints(this, "Сохранение урока", true)
+            .wrap(titleViolation(title))
+            .wrap(descriptionViolation(description))
+            .wrap(courseIdViolation(courseId, isCourseExists));
+    }
+
+    public static @Nullable AbstractViolation titleViolation(String title) {
+        return defConstraints(title, "Наименование", true, 1, 50);
+    }
+
+    public static @Nullable StringViolation descriptionViolation(String description) {
+        return defConstraints(description, "Описание", true, 1, 50);
+    }
+
+    public static @Nullable AbstractViolation courseIdViolation(Long courseId, Predicate<Long> isCourseExists) {
+        return useConstraints(courseId, "ID курса", true)
+            .addRule("Должен присутствовать в БД", isCourseExists.test(courseId));
     }
 }

@@ -39,8 +39,8 @@ class LessonRepositoryTest {
 
     private User user = new User(login, password, firstName, lastName, email);
     private Course course = new Course(title, description, null);
-    private Lesson paragraph = new Lesson(title, description, null, course, 0);
-    private Lesson lesson = new Lesson(title, description, null, course, 1);
+    private Lesson paragraph = new Lesson(title, description, 0, null, course);
+    private Lesson lesson = new Lesson(title, description, 1, null, course);
 
     @BeforeEach
     public void init() {

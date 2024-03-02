@@ -62,9 +62,14 @@ public class CourseService {
 
     @Transactional
     public void delete(long id) {
-        if (!courseRepository.isExists(id)) {
-            throw new ResourceNotFoundException(id);
-        }
         courseRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void addStudent(long userId, long courseId) {
+        var user = userRepository.getById(userId);
+        var course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(courseId));
+        course.addStudent(user);
+        courseRepository.save(course);
     }
 }

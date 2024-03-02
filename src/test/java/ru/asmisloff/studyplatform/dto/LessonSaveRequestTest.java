@@ -23,6 +23,6 @@ class LessonSaveRequestTest {
     @SneakyThrows
     public void deserialization() {
         LessonSaveRequest request = m.readValue(json, LessonSaveRequest.class);
-        assertEquals("qwerty", request.getTitle());
+        assertEquals("qwerty", request.title());
     }
 }

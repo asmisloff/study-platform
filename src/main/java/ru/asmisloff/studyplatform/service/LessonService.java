@@ -1,13 +1,10 @@
 package ru.asmisloff.studyplatform.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import ru.asmisloff.studyplatform.dto.LessonSaveRequest;
 import ru.asmisloff.studyplatform.dto.LessonUpdateRequest;
-import ru.asmisloff.studyplatform.entity.Course;
 import ru.asmisloff.studyplatform.entity.Lesson;
-import ru.asmisloff.studyplatform.entity.User;
 import ru.asmisloff.studyplatform.exceptions.ResourceNotFoundException;
 import ru.asmisloff.studyplatform.repository.CourseRepository;
 import ru.asmisloff.studyplatform.repository.LessonRepository;
@@ -30,19 +27,18 @@ public class LessonService {
     @Transactional
     public Lesson save(LessonSaveRequest request, long userId) {
         request.validate(courseRepository::isExists).throwIfNotEmpty();
-        return lessonRepository.save(fromDto(request, userId));
+        var user = userRepository.getById(userId);
+        var course = courseRepository.getById(request.courseId());
+        var lesson = new Lesson(request.title(), request.description(), request.index(), user, course);
+        return lessonRepository.save(lesson);
     }
 
     public void update(LessonUpdateRequest request) {
-        throw new NotImplementedException();
-    }
-
-    private Lesson fromDto(LessonSaveRequest request, long userId) {
-        String title = request.getTitle();
-        String description = request.getDescription();
-        User user = userRepository.getById(userId);
-        Course course = courseRepository.getById(request.getCourseId());
-        int index = request.getIndex();
-        return new Lesson(title, description, user, course, index);
+        var lesson = lessonRepository.findById(request.id()).orElse(null);
+        request.validate(id -> lesson != null).throwIfNotEmpty();
+        assert lesson != null;
+        lesson.setTitle(request.title());
+        lesson.setDescription(request.description());
+        lesson.setIndex(request.index());
     }
 }

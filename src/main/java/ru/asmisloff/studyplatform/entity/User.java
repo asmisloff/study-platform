@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -61,22 +62,25 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_roles",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "role_id") })
+        name = "user_roles",
+        joinColumns = { @JoinColumn(name = "user_id") },
+        inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Setter(AccessLevel.NONE)
     private Set<Role> roles;
 
     @ManyToMany
     @JoinTable(
-            name = "students_to_courses",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "course_id") })
+        name = "students_to_courses",
+        joinColumns = { @JoinColumn(name = "user_id") },
+        inverseJoinColumns = { @JoinColumn(name = "course_id") }
+    )
     private Set<Course> studiedCourses = new HashSet<>();
 
-    public User(String login, String password,
-                String firstName, String lastName,
-                String email) {
+    public User(
+        String login, String password,
+        String firstName, String lastName,
+        String email
+    ) {
         this.login = login;
         this.password = password;
         this.firstName = firstName;
@@ -84,6 +88,10 @@ public class User {
         this.email = email;
         this.registrationTime = LocalDateTime.now();
         this.roles = new HashSet<>();
+    }
+
+    public Stream<Course> studiedCourses() {
+        return studiedCourses.stream();
     }
 }
 
