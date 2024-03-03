@@ -74,11 +74,13 @@ public class User {
         joinColumns = { @JoinColumn(name = "user_id") },
         inverseJoinColumns = { @JoinColumn(name = "course_id") }
     )
-    private Set<Course> studiedCourses = new HashSet<>();
+    private Set<Course> relatedCourses = new HashSet<>();
 
     public User(
-        String login, String password,
-        String firstName, String lastName,
+        String login,
+        String password,
+        String firstName,
+        String lastName,
         String email
     ) {
         this.login = login;
@@ -90,8 +92,11 @@ public class User {
         this.roles = new HashSet<>();
     }
 
-    public Stream<Course> studiedCourses() {
-        return studiedCourses.stream();
+    public boolean subscribeToCourse(Course course) {
+        return relatedCourses.add(course);
+    }
+
+    public Stream<Course> relatedCourses() {
+        return relatedCourses.stream();
     }
 }
-

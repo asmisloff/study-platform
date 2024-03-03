@@ -64,12 +64,4 @@ public class CourseService {
     public void delete(long id) {
         courseRepository.deleteById(id);
     }
-
-    @Transactional
-    public void addStudent(long userId, long courseId) {
-        var user = userRepository.getById(userId);
-        var course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(courseId));
-        course.addStudent(user);
-        courseRepository.save(course);
-    }
 }

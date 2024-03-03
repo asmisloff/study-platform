@@ -53,7 +53,7 @@ class LessonRepositoryTest {
         course.addLesson(lesson);
 
         course = courseRepository.save(course);
-        user.getStudiedCourses().add(course);
+        user.getRelatedCourses().add(course);
         userRepository.save(user);
     }
 

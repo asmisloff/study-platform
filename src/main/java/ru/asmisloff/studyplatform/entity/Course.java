@@ -100,10 +100,6 @@ public class Course {
         lessons.remove(lesson);
     }
 
-    public void addStudent(User student) {
-        students.add(student);
-    }
-
     public Stream<User> students() {
         return students.stream();
     }

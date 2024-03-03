@@ -13,8 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.asmisloff.studyplatform.dto.CourseRequestToCreate;
 import ru.asmisloff.studyplatform.dto.CourseRequestToUpdate;
 import ru.asmisloff.studyplatform.entity.Course;
+import ru.asmisloff.studyplatform.entity.StudentToCourseId;
 import ru.asmisloff.studyplatform.entity.User;
 import ru.asmisloff.studyplatform.repository.CourseRepository;
+import ru.asmisloff.studyplatform.repository.StudentToCourseRepository;
 import ru.asmisloff.studyplatform.repository.UserRepository;
 
 import javax.persistence.EntityManager;
@@ -39,6 +41,12 @@ class CourseServiceTest {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private StudentToCourseRepository studentToCourseRepository;
+
+    @Autowired
+    private UserService userService;
 
     @PersistenceContext
     private EntityManager em;
@@ -106,10 +114,14 @@ class CourseServiceTest {
     @Transactional
     void addStudent() {
         var course = courses.get(0);
-        courseService.addStudent(user.getId(), course.getId());
+        userService.subscribeToCourse(user.getId(), course.getId());
         em.flush();
         em.clear();
         var fetchedUser = userRepository.findById(user.getId()).orElseThrow();
-        assertTrue(fetchedUser.studiedCourses().anyMatch(c -> c.getId().equals(course.getId())));
+        assertTrue(fetchedUser.relatedCourses().anyMatch(c -> c.getId().equals(course.getId())));
+        var fetchedCourse = courseRepository.findById(course.getId()).orElseThrow();
+        assertTrue(fetchedCourse.students().anyMatch(s -> s.getId().equals(user.getId())));
+        var stc = studentToCourseRepository.findById(new StudentToCourseId(user, course)).orElseThrow();
+        assertNotNull(stc.getStartTime());
     }
 }
