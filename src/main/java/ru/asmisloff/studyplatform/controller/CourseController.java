@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.asmisloff.studyplatform.dto.CourseRequestToCreate;
 import ru.asmisloff.studyplatform.dto.CourseRequestToUpdate;
@@ -46,6 +47,7 @@ public class CourseController {
         return courseService.save(request, id).getId();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public void deleteCourse(@RequestParam long id) {
         courseService.delete(id);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.asmisloff.studyplatform.StudyPlatformApplication;
 import ru.asmisloff.studyplatform.entity.Role;
+import ru.asmisloff.studyplatform.entity.RoleName;
 import ru.asmisloff.studyplatform.entity.User;
 
 import javax.transaction.Transactional;
@@ -24,15 +25,15 @@ public class UserRepositoryTest {
     @Test
     @Transactional
     public void save() {
-        final Role role = roleRepository.save(new Role(1L, "admin"));
+        final Role role = roleRepository.save(new Role(1L, RoleName.ROLE_ADMIN));
         final User user = new User("login", "pwd", "fn", "ln", "email");
         user.getRoles().add(role);
         User savedUser = userRepository.save(user);
         assertNotNull(savedUser.getId());
         assertTrue(userRepository
-                .findById(savedUser.getId())
-                .orElseThrow()
-                .getRoles()
-                .contains(role));
+            .findById(savedUser.getId())
+            .orElseThrow()
+            .getRoles()
+            .contains(role));
     }
 }

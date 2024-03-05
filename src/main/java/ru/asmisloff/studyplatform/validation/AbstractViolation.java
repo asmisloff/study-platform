@@ -3,6 +3,7 @@ package ru.asmisloff.studyplatform.validation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import ru.asmisloff.studyplatform.exceptions.VerificationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public abstract class AbstractViolation {
 
     public void throwIfNotEmpty() {
         if (!isNullOrEmpty(what) || !isNullOrEmpty(nested)) {
-            throw new IllegalStateException();
+            throw new VerificationException(this);
         }
     }
 

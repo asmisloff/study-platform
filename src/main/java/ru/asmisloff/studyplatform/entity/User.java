@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -46,13 +46,13 @@ public class User {
     private FileAsset avatar;
 
     @Column(name = "registration_time")
-    private LocalDateTime registrationTime;
+    private OffsetDateTime registrationTime;
 
     @Column(name = "last_update_time")
-    private LocalDateTime lastUpdateTime;
+    private OffsetDateTime lastUpdateTime;
 
     @Column(name = "deletion_time")
-    private LocalDateTime deletionTime;
+    private OffsetDateTime deletionTime;
 
     @Column(name = "last_updated_user_id")
     private Long lastUpdatedUserId;
@@ -88,7 +88,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.registrationTime = LocalDateTime.now();
+        this.registrationTime = OffsetDateTime.now();
         this.roles = new HashSet<>();
     }
 

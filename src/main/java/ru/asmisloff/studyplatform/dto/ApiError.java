@@ -1,3 +1,7 @@
 package ru.asmisloff.studyplatform.dto;
 
-public record ApiError(String message, String dateOccured) { }
+import org.jetbrains.annotations.Nullable;
+import ru.asmisloff.studyplatform.validation.AbstractViolation;
+
+public record ApiError(String message, String dateOccured, @Nullable AbstractViolation details) {
+}

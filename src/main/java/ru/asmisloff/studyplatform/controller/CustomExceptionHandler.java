@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.asmisloff.studyplatform.dto.ApiError;
 import ru.asmisloff.studyplatform.exceptions.ResourceNotFoundException;
+import ru.asmisloff.studyplatform.exceptions.VerificationException;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,20 +19,28 @@ import java.util.stream.Collectors;
 public class CustomExceptionHandler {
 
     @ExceptionHandler({ NoSuchElementException.class, ResourceNotFoundException.class })
-    public ResponseEntity<ApiError> noSuchElementExceptionHandler(RuntimeException ex) {
+    public ResponseEntity<ApiError> handleNoSuchElementException(RuntimeException ex) {
         return new ResponseEntity<>(
-            new ApiError(ex.getMessage(), now()),
+            new ApiError(ex.getMessage(), now(), null),
             HttpStatus.NOT_FOUND
         );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String errorMessages = e.getBindingResult().getAllErrors().stream()
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
             .collect(Collectors.joining("\n"));
         return new ResponseEntity<>(
-            new ApiError(e.getNestedPath() + errorMessages, now()),
+            new ApiError(e.getNestedPath() + errorMessages, now(), null),
+            HttpStatus.UNPROCESSABLE_ENTITY
+        );
+    }
+
+    @ExceptionHandler(VerificationException.class)
+    public ResponseEntity<ApiError> handleVerificationException(VerificationException e) {
+        return new ResponseEntity<>(
+            new ApiError(e.getMessage(), now(), e.getViolation()),
             HttpStatus.UNPROCESSABLE_ENTITY
         );
     }

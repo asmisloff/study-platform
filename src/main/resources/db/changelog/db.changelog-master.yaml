@@ -5,3 +5,10 @@ databaseChangeLog:
       sqlFile:
         path: sql/2024-02-17_create_basic_tables.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 2024-03-04_add_basic_roles
+      author: asmisloff
+      sqlFile:
+        path: sql/2024-03-04_add_basic_roles.sql
+        relativeToChangelogFile: true
+

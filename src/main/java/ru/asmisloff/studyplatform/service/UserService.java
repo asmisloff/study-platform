@@ -8,6 +8,8 @@ import ru.asmisloff.studyplatform.repository.UserRepository;
 
 import javax.transaction.Transactional;
 
+import static ru.asmisloff.studyplatform.entity.Resource.USER;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -17,7 +19,7 @@ public class UserService {
 
     @Transactional
     public void subscribeToCourse(long userId, long courseId) {
-        var user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(userId));
+        var user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, userId));
         var course = courseRepository.getById(courseId);
         user.subscribeToCourse(course);
         userRepository.save(user);

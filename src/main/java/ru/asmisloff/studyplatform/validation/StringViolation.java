@@ -14,7 +14,7 @@ public class StringViolation extends ObjectViolation<String> {
     @Override
     public String getTitle() {
         if (value != null) {
-            return String.format("%s = %S", name, value);
+            return String.format("%s = %s", name, value);
         } else {
             return String.format("%s = значение отсутствует", name);
         }

@@ -16,6 +16,9 @@ import ru.asmisloff.studyplatform.repository.UserRepository;
 
 import java.util.List;
 
+import static ru.asmisloff.studyplatform.entity.Resource.COURSE;
+import static ru.asmisloff.studyplatform.entity.Resource.USER;
+
 @Service
 @AllArgsConstructor
 public class CourseService {
@@ -24,7 +27,7 @@ public class CourseService {
     private final UserRepository userRepository;
 
     public Course getById(Long id) {
-        return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(COURSE, id));
     }
 
     @Transactional(readOnly = true)
@@ -49,7 +52,7 @@ public class CourseService {
             Course course = new Course(request.title(), "", user);
             return courseRepository.save(course);
         } else {
-            throw new ResourceNotFoundException(userId);
+            throw new ResourceNotFoundException(USER, userId);
         }
     }
 

@@ -12,6 +12,8 @@ import ru.asmisloff.studyplatform.repository.UserRepository;
 
 import javax.transaction.Transactional;
 
+import static ru.asmisloff.studyplatform.entity.Resource.LESSON;
+
 @Service
 @RequiredArgsConstructor
 public class LessonService {
@@ -21,7 +23,7 @@ public class LessonService {
     private final UserRepository userRepository;
 
     public Lesson getById(long id) {
-        return lessonRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+        return lessonRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(LESSON, id));
     }
 
     @Transactional
