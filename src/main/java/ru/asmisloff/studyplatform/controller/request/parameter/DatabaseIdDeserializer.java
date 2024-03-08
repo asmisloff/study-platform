@@ -1,6 +1,5 @@
 package ru.asmisloff.studyplatform.controller.request.parameter;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -13,7 +12,7 @@ public class DatabaseIdDeserializer extends JsonDeserializer<DatabaseID> {
     public DatabaseID deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String value = p.getValueAsString();
         if (value == null) {
-            throw new JsonParseException(p, "Отсутствует значение параметра DatabaseId");
+            return DatabaseID.UNDEFINED;
         }
         return new DatabaseID(value);
     }

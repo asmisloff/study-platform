@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -60,13 +61,13 @@ public class User {
     @Column(name = "deleted_user_id")
     private Long deletedUserId;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
         joinColumns = { @JoinColumn(name = "user_id") },
         inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Setter(AccessLevel.NONE)
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -98,5 +99,10 @@ public class User {
 
     public Stream<Course> relatedCourses() {
         return relatedCourses.stream();
+    }
+
+    public void updateRoles(Collection<Role> roles) {
+        this.roles.clear();
+        this.roles.addAll(roles);
     }
 }

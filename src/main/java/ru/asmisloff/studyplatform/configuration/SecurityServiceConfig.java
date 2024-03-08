@@ -1,4 +1,4 @@
-package ru.asmisloff.studyplatform.security;
+package ru.asmisloff.studyplatform.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

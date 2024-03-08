@@ -11,4 +11,10 @@ databaseChangeLog:
       sqlFile:
         path: sql/2024-03-04_add_basic_roles.sql
         relativeToChangelogFile: true
+  - changeSet:
+      id: 2024-03-07_add_admin
+      author: asmisloff
+      sqlFile:
+        path: sql/2024-03-07_add_admin.sql
+        relativeToChangelogFile: true
 

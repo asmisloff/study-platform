@@ -21,6 +21,8 @@ public class DatabaseID {
         return StringUtils.equalsIgnoreCase(value, "undefined");
     }
 
+    public static final DatabaseID UNDEFINED = new DatabaseID("undefined");
+
     public long longValue() {
         if (isNull()) {
             return 0L;
