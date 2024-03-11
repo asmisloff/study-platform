@@ -1,7 +1,6 @@
 package ru.asmisloff.studyplatform.service;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Course> findAllByTitleWithPrefix(@Nullable String prefix) {
+    public List<Course> findAllByTitleWithPrefix(String prefix) {
         if (prefix == null) {
             return courseRepository.findAll();
         } else {

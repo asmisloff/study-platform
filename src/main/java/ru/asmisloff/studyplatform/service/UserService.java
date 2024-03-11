@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.asmisloff.studyplatform.configuration.UserPrincipal;
-import ru.asmisloff.studyplatform.controller.request.PagingAndSearchParameters;
-import ru.asmisloff.studyplatform.controller.request.filtering.AdminUserFilteringCriteria;
+import ru.asmisloff.studyplatform.controller.request.PaginationParameters;
+import ru.asmisloff.studyplatform.controller.request.filtering.admin.AdminUserFilteringCriteria;
 import ru.asmisloff.studyplatform.dto.UserInfo;
 import ru.asmisloff.studyplatform.entity.RoleName;
 import ru.asmisloff.studyplatform.entity.User;
@@ -33,8 +33,8 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public Page<User> findAll(PagingAndSearchParameters p, AdminUserFilteringCriteria cr) {
-        return userRepository.findAll(cr.pageable(p));
+    public Page<User> findAll(PaginationParameters p, AdminUserFilteringCriteria cr) {
+        return userRepository.findAll(p.pageable());
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class UserService {
 
     @Transactional
     public void update(UserInfo userInfo, UserPrincipal principal) {
-        userInfo.validate(true).throwIfNotEmpty();
+        userInfo.validate(true, (id) -> true).throwIfNotEmpty();
         Long id = userInfo.getId();
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, id));
 

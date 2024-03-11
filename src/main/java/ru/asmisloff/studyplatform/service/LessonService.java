@@ -2,6 +2,7 @@ package ru.asmisloff.studyplatform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.asmisloff.studyplatform.dto.LessonSaveRequest;
 import ru.asmisloff.studyplatform.dto.LessonUpdateRequest;
 import ru.asmisloff.studyplatform.entity.Lesson;
@@ -9,8 +10,6 @@ import ru.asmisloff.studyplatform.exceptions.ResourceNotFoundException;
 import ru.asmisloff.studyplatform.repository.CourseRepository;
 import ru.asmisloff.studyplatform.repository.LessonRepository;
 import ru.asmisloff.studyplatform.repository.UserRepository;
-
-import javax.transaction.Transactional;
 
 import static ru.asmisloff.studyplatform.entity.Resource.LESSON;
 

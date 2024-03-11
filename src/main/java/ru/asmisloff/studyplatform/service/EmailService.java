@@ -13,9 +13,9 @@ public class EmailService {
 
     public void sendCredentials(String email, String login, String password) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo("a.smisloff@gmail.com");
-        mailMessage.setText("adswewe");
-        mailMessage.setSubject("asdasffas");
+        mailMessage.setTo(email);
+        mailMessage.setText("login: %s\npassword: %s".formatted(login, password));
+        mailMessage.setSubject("Регистрация в системе");
         mailMessage.setFrom("a.smisloff@yandex.ru");
         mailSender.send(mailMessage);
     }

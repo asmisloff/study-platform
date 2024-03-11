@@ -1,12 +1,5 @@
 package ru.asmisloff.studyplatform.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-
-import javax.persistence.*;
-
 @Entity
 @Table(name = "categories")
 @AllArgsConstructor

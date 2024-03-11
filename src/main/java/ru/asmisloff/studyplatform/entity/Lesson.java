@@ -1,12 +1,12 @@
 package ru.asmisloff.studyplatform.entity;
 
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.*;
 

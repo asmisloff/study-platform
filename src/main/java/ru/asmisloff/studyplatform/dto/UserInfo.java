@@ -9,6 +9,9 @@ import ru.asmisloff.studyplatform.validation.AbstractViolation;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Function;
+
+import static ru.asmisloff.studyplatform.validation.Constraints.useConstraints;
 
 @Getter
 @AllArgsConstructor
@@ -36,7 +39,11 @@ public class UserInfo {
         );
     }
 
-    public AbstractViolation validate(boolean idRequired) {
-        return null;
+    public AbstractViolation validate(boolean idRequired, Function<String, Boolean> isLoginUnique) {
+        var v = useConstraints(this, "Пользователь", true);
+        v.wrap(useConstraints(login, "Логин", true, 5, 15)
+            .addRule("Должен быть уникальным", isLoginUnique.apply(login))
+        );
+        return v;
     }
 }

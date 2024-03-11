@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("VulnerableCodeUsages")
-class DatabaseIDTest {
+class DbIdFilteringCriteriaTest {
 
     private final ObjectMapper m = new ObjectMapper();
 
     @Test
     @SneakyThrows
     public void deserialization() {
-        DatabaseID id = m.readValue("123", DatabaseID.class);
-        assertEquals(123, id.longValue());
+        DbIdFilteringCriteria id = m.readValue("123", DbIdFilteringCriteria.class);
+        assertEquals(123, id.toBigInt());
     }
 }

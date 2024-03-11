@@ -1,10 +1,9 @@
 package ru.asmisloff.studyplatform.validation;
 
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.asmisloff.studyplatform.controller.request.PagingAndSearchParameters;
 
-import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNullElse;
@@ -17,24 +16,6 @@ public class Constraints {
             if (required) {
                 v.getWhat().add("Отсутствует значение");
             }
-        }
-        return v;
-    }
-
-    public static ObjectViolation<PagingAndSearchParameters> useConstraints(
-        @NotNull PagingAndSearchParameters pagingAndSearchParameters,
-        String[] allowedSortProperties
-    ) {
-        var v = useConstraints(pagingAndSearchParameters, "Пагинация и сортировка", false);
-        for (String param : pagingAndSearchParameters.getSortBy()) {
-            String field = StringUtils.substringBefore(param, ':');
-            String direction = StringUtils.substringAfter(param, ':');
-            boolean asc = StringUtils.compareIgnoreCase(direction, "asc") == 0;
-            boolean desc = StringUtils.compareIgnoreCase(direction, "desc") == 0;
-            StringViolation paramViolation = useConstraints(param, "sortBy", true, 0, Integer.MAX_VALUE);
-            paramViolation.addRule("Неизвестное поле", contains(allowedSortProperties, field));
-            paramViolation.addRule("Неизвестное направление сортировки", asc || desc || direction.isEmpty());
-            v.wrap(paramViolation);
         }
         return v;
     }
@@ -55,13 +36,13 @@ public class Constraints {
     }
 
     public static StringViolation defConstraints(
-        String value, String name, boolean required, int min, int max, String[] allowedValues, Function<@NotNull String, String> additionally
+        String value, String name, boolean required, int min, int max, String[] allowedValues, Function<String, String> additionally
     ) {
         StringViolation v = null;
         if (value == null) {
             if (required) {
                 v = new StringViolation(null, name);
-                v.getWhat().add("Параметр обязателен");
+                v.addError("Параметр обязателен");
             }
         } else {
             int len = value.length();
@@ -84,7 +65,68 @@ public class Constraints {
         return v;
     }
 
-    private static boolean contains(String[] array, String elt) {
+    public static @Nullable DoubleViolation defConstraints(
+        double value,
+        String name,
+        int min,
+        int max,
+        int precision,
+        @Nullable double[] allowedValues
+    ) {
+        return DoubleViolation.defConstraints(name, value, min, max, precision, allowedValues);
+    }
+
+    public static @NotNull DoubleViolation useConstraints(
+        double value,
+        String name,
+        int min,
+        int max,
+        int precision,
+        double[] allowedValues) {
+        return Objects.requireNonNullElse(
+            defConstraints(value, name, min, max, precision, allowedValues),
+            new DoubleViolation(name, value)
+        );
+    }
+
+    public static @Nullable AbstractViolation defConstraints(
+        @Nullable Double value,
+        String name,
+        boolean required,
+        int min,
+        int max,
+        int precision,
+        @Nullable double[] allowedValues
+    ) {
+        if (value == null && required) {
+            return new NullableDoubleViolation(null, name);
+        } else if (value != null) {
+            return DoubleViolation.defConstraints(name, value, min, max, precision, allowedValues);
+        }
+        return null;
+    }
+
+    @NotNull
+    public static AbstractViolation useConstraints(
+        @Nullable Double value,
+        String name,
+        boolean required,
+        int min,
+        int max,
+        int precision,
+        @Nullable double[] allowedValues
+    ) {
+        var v = defConstraints(value, name, required, min, max, precision, allowedValues);
+        if (v != null) {
+            return v;
+        } else if (value != null) {
+            return new DoubleViolation(name, value);
+        } else {
+            return new NullableDoubleViolation(null, name);
+        }
+    }
+
+    public static boolean contains(String[] array, String elt) {
         for (String s : array) {
             if (elt.equals(s)) {
                 return true;

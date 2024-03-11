@@ -1,5 +1,9 @@
 package ru.asmisloff.studyplatform.controller.request.parameter;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -7,9 +11,11 @@ import ru.asmisloff.studyplatform.validation.AbstractViolation;
 import ru.asmisloff.studyplatform.validation.Constraints;
 import ru.asmisloff.studyplatform.validation.StringViolation;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
-@JsonDeserialize(using = DatabaseIdDeserializer.class)
-public class DatabaseID {
+@JsonDeserialize(using = DbIdFilteringCriteriaDeserializer.class)
+public class DbIdFilteringCriteria {
 
     private final String value;
 
@@ -18,12 +24,12 @@ public class DatabaseID {
     }
 
     public boolean isUndefined() {
-        return StringUtils.equalsIgnoreCase(value, "undefined");
+        return value == null;
     }
 
-    public static final DatabaseID UNDEFINED = new DatabaseID("undefined");
+    public static final DbIdFilteringCriteria UNDEFINED = new DbIdFilteringCriteria(null);
 
-    public long longValue() {
+    public long toBigInt() {
         if (isNull()) {
             return 0L;
         } else if (isUndefined()) {
@@ -35,11 +41,8 @@ public class DatabaseID {
 
     public AbstractViolation validate(String param, boolean required, boolean nullable) {
         StringViolation v = Constraints.useConstraints(
-            this.value, "Параметр запроса %s".formatted(param), true, 0, Integer.MAX_VALUE
+            this.value, "Параметр запроса %s".formatted(param), required, 0, Integer.MAX_VALUE
         );
-        if (required) {
-            v.addRule("Значение обязательно", !isUndefined());
-        }
         if (!nullable) {
             v.addRule("Значение null не допускается", !isNull());
         }
@@ -56,5 +59,24 @@ public class DatabaseID {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+}
+
+
+class DbIdFilteringCriteriaDeserializer extends JsonDeserializer<DbIdFilteringCriteria> {
+
+    @Override
+    public DbIdFilteringCriteria deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return new DbIdFilteringCriteria(p.getText());
+    }
+
+    @Override
+    public DbIdFilteringCriteria getNullValue(DeserializationContext ctxt) {
+        return DbIdFilteringCriteria.UNDEFINED;
+    }
+
+    @Override
+    public Object getEmptyValue(DeserializationContext ctxt) throws JsonMappingException {
+        return getNullValue(ctxt);
     }
 }
