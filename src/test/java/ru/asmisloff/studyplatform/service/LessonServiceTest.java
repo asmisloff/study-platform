@@ -1,5 +1,8 @@
 package ru.asmisloff.studyplatform.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,6 @@ import ru.asmisloff.studyplatform.repository.CourseRepository;
 import ru.asmisloff.studyplatform.repository.LessonRepository;
 import ru.asmisloff.studyplatform.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

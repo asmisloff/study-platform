@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.proxy.HibernateProxy;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
@@ -45,7 +46,7 @@ public class Course {
     private User deletedUser;
 
     @Column(name = "creation_time", nullable = false)
-    private OffsetDateTime creationTime;
+    private OffsetDateTime creationTime = OffsetDateTime.now();
 
     @Column(name = "last_update_time")
     private OffsetDateTime lastUpdateTime;
@@ -64,9 +65,8 @@ public class Course {
     private String tag;
 
     @OneToMany(mappedBy = "course", orphanRemoval = true, cascade = CascadeType.ALL)
-    @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private Set<Lesson> lessons = new HashSet<>();
+    private final Set<Lesson> lessons = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -74,7 +74,8 @@ public class Course {
         joinColumns = { @JoinColumn(name = "course_id") },
         inverseJoinColumns = { @JoinColumn(name = "user_id") }
     )
-    private Set<User> students = new HashSet<>();
+    @Getter(AccessLevel.NONE)
+    private final Set<User> students = new HashSet<>();
 
     public Course(String title, String description, User createdUser) {
         this.title = title;
@@ -102,5 +103,21 @@ public class Course {
 
     public Stream<User> students() {
         return students.stream();
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Course course = (Course) o;
+        return getId() != null && Objects.equals(getId(), course.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

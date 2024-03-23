@@ -14,7 +14,6 @@ import ru.asmisloff.studyplatform.dto.UserInfo;
 import ru.asmisloff.studyplatform.entity.User;
 import ru.asmisloff.studyplatform.exceptions.ResourceNotFoundException;
 import ru.asmisloff.studyplatform.repository.UserRepository;
-import ru.asmisloff.studyplatform.service.EmailService;
 import ru.asmisloff.studyplatform.service.UserService;
 import ru.asmisloff.studyplatform.validation.Constraints;
 
@@ -27,7 +26,6 @@ public class AdminUserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final EmailService emailService;
 
     @GetMapping("/{id}")
     public UserInfo getById(@PathVariable DbIdFilteringCriteria id) {
@@ -35,7 +33,7 @@ public class AdminUserController {
         User user = userRepository.findById(id.toBigInt()).orElseThrow(() ->
             new ResourceNotFoundException(USER, id.toBigInt())
         );
-        return UserInfo.fromUser(user);
+        return UserInfo.from(user);
     }
 
     @GetMapping
@@ -50,13 +48,13 @@ public class AdminUserController {
             .throwIfNotEmpty();
         Page<UserInfo> page = userService
             .findAll(paginationParameters, filteringCriteria)
-            .map(UserInfo::fromUser);
+            .map(UserInfo::from);
         return Paginated.from(page);
     }
 
     @PostMapping
     public long create(@RequestBody UserInfo userInfo) {
-        return userService.create(userInfo).getId();
+        return userService.createAndSendCredentials(userInfo).getId();
     }
 
     @PutMapping

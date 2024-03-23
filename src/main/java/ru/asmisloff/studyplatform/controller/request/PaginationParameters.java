@@ -64,7 +64,9 @@ public abstract class PaginationParameters {
             orders[i] = new Sort.Order(direction, decorated(field));
         }
         int pageIndex = Integer.parseInt(page);
+        if (pageIndex < 0) pageIndex = 0;
         int pageSize = Integer.parseInt(size);
+        if (pageSize <= 0) pageSize = Integer.MAX_VALUE;
         return PageRequest.of(pageIndex, pageSize, Sort.by(orders));
     }
 

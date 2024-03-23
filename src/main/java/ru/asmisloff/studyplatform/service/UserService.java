@@ -2,13 +2,14 @@ package ru.asmisloff.studyplatform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.asmisloff.studyplatform.configuration.UserPrincipal;
-import ru.asmisloff.studyplatform.controller.request.PaginationParameters;
 import ru.asmisloff.studyplatform.controller.request.filtering.admin.AdminUserFilteringCriteria;
+import ru.asmisloff.studyplatform.controller.request.filtering.admin.AdminUserPaginationParameters;
 import ru.asmisloff.studyplatform.dto.UserInfo;
 import ru.asmisloff.studyplatform.entity.RoleName;
 import ru.asmisloff.studyplatform.entity.User;
@@ -32,22 +33,42 @@ public class UserService {
     private final EmailService emailService;
     private final RoleRepository roleRepository;
 
+    @Value("${study.platform.random.password.length}")
+    private int randomPasswordLength;
+
     @Transactional(readOnly = true)
-    public Page<User> findAll(PaginationParameters p, AdminUserFilteringCriteria cr) {
+    public User getUserById(long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, id));
+    }
+
+    @Transactional(readOnly = true)
+    public UserInfo getUserInfoById(long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, id));
+        return UserInfo.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> findAll(AdminUserPaginationParameters p, AdminUserFilteringCriteria cr) {
         return userRepository.findAll(p.pageable());
     }
 
     @Transactional
-    public User create(UserInfo userInfo) {
+    public User createAndSendCredentials(UserInfo userInfo) {
+        String password = RandomStringUtils.randomAlphabetic(randomPasswordLength);
+        User user = create(userInfo, password);
+        emailService.sendCredentials(user.getEmail(), user.getLogin(), password);
+        return user;
+    }
+
+    @Transactional
+    public User create(UserInfo userInfo, String password) {
         String login = userInfo.getLogin();
-        String password = RandomStringUtils.randomAlphabetic(10);
         String encodedPassword = passwordEncoder.encode(password);
         String firstName = userInfo.getFirstName();
         String lastName = userInfo.getLastName();
         String email = userInfo.getEmail();
         User user = new User(login, encodedPassword, firstName, lastName, email);
-        emailService.sendCredentials(email, login, password);
-        return user;
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -73,7 +94,7 @@ public class UserService {
     @Transactional
     public void subscribeToCourse(long userId, long courseId) {
         var user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, userId));
-        var course = courseRepository.getById(courseId);
+        var course = courseRepository.getReferenceById(courseId);
         user.subscribeToCourse(course);
         userRepository.save(user);
     }

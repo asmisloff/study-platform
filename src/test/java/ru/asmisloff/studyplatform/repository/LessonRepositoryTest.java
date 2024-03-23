@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import ru.asmisloff.studyplatform.entity.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +53,7 @@ class LessonRepositoryTest {
         course.addLesson(lesson);
 
         course = courseRepository.save(course);
-        user.getRelatedCourses().add(course);
+        user.subscribeToCourse(course);
         userRepository.save(user);
     }
 
@@ -92,10 +92,11 @@ class LessonRepositoryTest {
     @Transactional
     public void delete() {
         StudentToCourseId studentToCourseId = new StudentToCourseId(user, course);
-        var studentToCourse = assertDoesNotThrow(() -> studentToCourseRepository.getById(studentToCourseId));
-        assertDoesNotThrow(() -> lessonRepository.getById(paragraph.getId()));
-        assertDoesNotThrow(() -> lessonRepository.getById(lesson.getId()));
-        assertDoesNotThrow(() -> courseRepository.getById(course.getId()));
+        var studentToCourse = assertDoesNotThrow(() ->
+            studentToCourseRepository.getReferenceById(studentToCourseId));
+        assertDoesNotThrow(() -> lessonRepository.getReferenceById(paragraph.getId()));
+        assertDoesNotThrow(() -> lessonRepository.getReferenceById(lesson.getId()));
+        assertDoesNotThrow(() -> courseRepository.getReferenceById(course.getId()));
 
         studentToCourseRepository.delete(studentToCourse);
         courseRepository.delete(course);

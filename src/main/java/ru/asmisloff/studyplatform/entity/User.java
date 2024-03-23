@@ -22,7 +22,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private final Long id = null;
 
     @Column(name = "login", nullable = false, length = 50)
     private String login;
@@ -66,7 +66,6 @@ public class User {
         name = "user_roles",
         joinColumns = { @JoinColumn(name = "user_id") },
         inverseJoinColumns = { @JoinColumn(name = "role_id") })
-    @Setter(AccessLevel.NONE)
     private Set<Role> roles = new HashSet<>();
 
     @ManyToMany
@@ -75,6 +74,8 @@ public class User {
         joinColumns = { @JoinColumn(name = "user_id") },
         inverseJoinColumns = { @JoinColumn(name = "course_id") }
     )
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private Set<Course> relatedCourses = new HashSet<>();
 
     public User(
@@ -93,8 +94,8 @@ public class User {
         this.roles = new HashSet<>();
     }
 
-    public boolean subscribeToCourse(Course course) {
-        return relatedCourses.add(course);
+    public void subscribeToCourse(Course course) {
+        relatedCourses.add(course);
     }
 
     public Stream<Course> relatedCourses() {

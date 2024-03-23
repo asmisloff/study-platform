@@ -8,6 +8,10 @@ public class AdminUserPaginationParameters extends PaginationParameters {
         super(page, size, sortDirection, sortBy);
     }
 
+    public static AdminUserPaginationParameters unpaged() {
+        return new AdminUserPaginationParameters(null, null, null, null);
+    }
+
     @Override
     protected String[] defaultSortBy() {
         return new String[]{ "id" };

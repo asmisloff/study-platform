@@ -2,6 +2,7 @@ package ru.asmisloff.studyplatform.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import ru.asmisloff.studyplatform.entity.Role;
 import ru.asmisloff.studyplatform.entity.RoleName;
 import ru.asmisloff.studyplatform.entity.User;
@@ -14,19 +15,20 @@ import java.util.function.Function;
 import static ru.asmisloff.studyplatform.validation.Constraints.useConstraints;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class UserInfo {
 
     private final Long id;
-    private final String login;
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final String phone;
-    private final OffsetDateTime registrationTime;
-    private final List<RoleName> roles;
+    private String login;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private OffsetDateTime registrationTime;
+    private List<RoleName> roles;
 
-    public static UserInfo fromUser(User user) {
+    public static UserInfo from(User user) {
         return new UserInfo(
             user.getId(),
             user.getLogin(),

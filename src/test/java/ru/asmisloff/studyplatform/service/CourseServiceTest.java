@@ -1,5 +1,8 @@
 package ru.asmisloff.studyplatform.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,11 +22,11 @@ import ru.asmisloff.studyplatform.repository.CourseRepository;
 import ru.asmisloff.studyplatform.repository.StudentToCourseRepository;
 import ru.asmisloff.studyplatform.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static java.util.Objects.requireNonNullElse;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -56,10 +59,9 @@ class CourseServiceTest {
         user = userRepository.save(
             new User("user", "password", "Ivan", "Ivanoff", "i.ivanoff@mail.ru")
         );
-        courses = courseRepository.saveAll(List.of(
-            new Course("Война и мир", "Роман-эпопея", user),
-            new Course("Евгений Онегин", "Роман в стихах", user)
-        ));
+        courses = courseRepository.saveAll(
+            IntStream.range(0, 2).mapToObj(i -> randomCourse(user)).toList()
+        );
     }
 
     @ParameterizedTest
@@ -123,5 +125,10 @@ class CourseServiceTest {
         assertTrue(fetchedCourse.students().anyMatch(s -> s.getId().equals(user.getId())));
         var stc = studentToCourseRepository.findById(new StudentToCourseId(user, course)).orElseThrow();
         assertNotNull(stc.getStartTime());
+    }
+
+    public static Course randomCourse(@Nullable User createdUser) {
+        createdUser = requireNonNullElse(createdUser, UserServiceTest.randomUser());
+        return new Course(randomAlphabetic(25), randomAlphabetic(30), createdUser);
     }
 }
